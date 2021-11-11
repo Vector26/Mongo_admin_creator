@@ -32,6 +32,8 @@ module.exports = class Admin{
     createRoute(MODEL,model_name){
         this.CREATE(MODEL,model_name);
         this.READ(MODEL,model_name);
+        this.UPDATE(MODEL,model_name);
+        this.DELETE(MODEL,model_name);
     }
 
     CREATE(MODEL,model_name){
@@ -58,14 +60,25 @@ module.exports = class Admin{
         });
     }
 
+    getSchema(MODEL){
+        var data=MODEL.schema.paths;
+        var actualSchema={};
+        const infoKey="instance"
+        Object.keys(data).map((e)=>{
+            actualSchema[e]=data[e][infoKey];
+        });
+        return actualSchema;
+    }
+
     READ(MODEL,model_name){
         this.app.get(`/${model_name}`, (req, res) => {
+            var schema=this.getSchema(MODEL);
             MODEL.find({},function(err,item){
                 if(err){
                     console.log(err);
                 }
                 else{
-                res.json({"schema":MODEL.schema.paths,"list":item});
+                res.json({"schema":schema,"list":item});
                 }
             });
         });
@@ -81,6 +94,45 @@ module.exports = class Admin{
         });
     }
     
+    UPDATE(MODEL,model_name){
+        this.app.post(`/${model_name}/:id`, (req, res) => {
+            var data=req.body;
+            // res.json(data);
+            var id=req.params.id;
+                MODEL.validate(data)
+                .then(() => {
+                    console.log('OK!', data);
+                    MODEL.updateOne({_id:id},data,function(err,item){
+                        if(err){
+                            console.log(err);
+                            res.status(400).json({ message: 'Error' });
+                        }
+                        else{
+                        res.status(200).json(item);
+                        }
+                });
+                })
+                .catch( err => {
+                    console.error('FAILED:',err)
+                    res.json("Wrong Schema, This will be reported");
+                });
+        });
+    }
+
+    DELETE(MODEL,model_name){
+        this.app.delete(`/${model_name}`, (req, res) => {
+            var data=req.body.list;
+            MODEL.deleteMany({_id: { $in: data}},function(err,item){
+                if(err){
+                    console.log(err);
+                }
+                else{
+                res.json(item);
+                }
+            });
+        });
+    }
+
 }
 
 // export default Admin;
