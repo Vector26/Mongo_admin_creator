@@ -1,0 +1,20 @@
+<% include partials/head %>
+<nav style="background-color:rgb(108, 109, 110);height:3em;width:100%;padding-left:0.7em;">
+    <button class="btn btn-default" style="height:100%; width:7.5%; background-color:rgb(1, 207, 119);" onclick="location.href='/upload'">Upload</button>
+</nav>
+<div style="height:35em;width:100%;background-attachment:fixed;background-image:url('https://images.unsplash.com/photo-1576229415350-886957126665?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=891&q=80');">
+<div class="container" style="height:20em;width:100%;padding-top:3em; padding-right:0px;">
+    <div class="jumbotron" style="height:15em;position:relative;left:5em;">
+        <h1 style="position:relative;top:8%;font-size:6em;">Hello.</h1>
+    </div>
+</div></div>
+<div style="margin-top:5em;">
+    <div class="container">
+        <div class="row">
+        <%  for(i=0;i<list.length;i++){%>
+        <div class="col-lg-4 col-md-6 col-sm-12" style="border-style:solid;border-color:gray;border-width:2px;padding:0px;height:25em;" ><img class="img-responsive" style="height:70%;width:100%;" src=<%= list[i]["link"]%>><p><%= list[i]["capt ion"]%></p></div>
+      <%}%>
+    </div>
+    </div>
+</div>
+<% include partials/foot %>
